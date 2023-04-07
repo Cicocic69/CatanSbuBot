@@ -1,13 +1,11 @@
-
-  
 //motore A
-const int enA = 3; // PWM
-const int in1 = 4;        
-const int in2 = 2;
+const int enA = 3; // PWM 2
+const int in1 = 4;     // 22 
+const int in2 = 2;     // 23
 const int speedA = 255;
 
 //motore B
-const int enB = 5; // !!! QUESTO PWM FUNZIONA A 500, NON A 255
+const int enB = 5; // !!! QUESTO PWM FUNZIONA A 500, NON A 255 
 const int in3 = 8;
 const int in4 = 7;
 const int speedB = 500;
@@ -75,10 +73,16 @@ void loop() {
   vaiASinistra();
   vaiStop();
   delay(1000);
-  diagSin();
+  diagSinAvanti();
   vaiStop();
   delay(1000);
-  diagDes();
+  diagDesAvanti();
+  vaiStop();
+  delay(1000);
+  diagSinIndietro();
+  vaiStop();
+  delay(1000);
+  diagDesIndietro();
   vaiStop();
   delay(1000);
 
@@ -162,7 +166,7 @@ void vaiASinistra(){
   delay(1000);
 }
 
-void diagDes(){
+void diagDesAvanti(){
   analogWrite(enA, speedA);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
@@ -172,11 +176,47 @@ void diagDes(){
   delay(1000);
 }
 
-void diagSin(){
+void diagSinAvanti(){
   analogWrite(enB, speedA);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(enC, speedD);
+  digitalWrite(in5, HIGH);
+  digitalWrite(in6, LOW);
+  delay(1000);
+}
+
+void diagDesIndietro(){
+  analogWrite(enA, speedA);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  analogWrite(enD, speedD);
+  digitalWrite(in7, LOW);
+  digitalWrite(in8, HIGH);
+  delay(1000);
+}
+
+void diagSinIndietro(){
+  analogWrite(enB, speedA);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  analogWrite(enC, speedD);
+  digitalWrite(in5, LOW);
+  digitalWrite(in6, HIGH);
+  delay(1000);
+}
+
+void ruotaDestra(){
+  analogWrite(enA, speedA);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
-  analogWrite(enC, speedD);
+  analogWrite(enB, speedB);    // !!! QUESTO PWM FUNZIONA A 500, NON A 255
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(enC, speedC);    // !!! QUESTO PWM FUNZIONA A 500, NON A 255
+  digitalWrite(in5, HIGH);
+  digitalWrite(in6, LOW);
+  analogWrite(enD, speedD);
   digitalWrite(in7, HIGH);
   digitalWrite(in8, LOW);
   delay(1000);
