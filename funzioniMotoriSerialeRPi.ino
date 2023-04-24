@@ -9,6 +9,12 @@ Servo servoMuoviBraccio;
 #define servoApriBraccioPin 8
 #define servoMuoviBraccioPin 9
 
+//inizializzazione variabili relative al timer
+unsigned long startTime; 
+unsigned long stopTime;
+unsigned long myDesiredTime;
+bool controllo = false;
+
 //motore A
 const int enA = 2; // PWM
 const int in1 = 22;      
@@ -37,7 +43,15 @@ String comando;
 
 void setup() {
   // put your setup code here, to run once:
+  
+  //avvio seriale
+  Serial.begin(9600);
 
+  startTime = 0;
+  stopTime = 0;
+  myDesiredTime = 205000;
+  
+  //collegamento servo
   servoApriBraccio.attach(servoApriBraccioPin);
   servoMuoviBraccio.attach(servoMuoviBraccioPin);
 
@@ -72,87 +86,99 @@ void setup() {
   digitalWrite(in7, LOW);
   digitalWrite(in8, LOW);
   digitalWrite(enD, LOW);
-
-  //avvio seriale
-  Serial.begin(9600);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  if(Serial.available()){
-
-    //prende input da seriale RPi
-    comando = Serial.read();
-    //*
-    //* debug
-    //*
-    Serial.print("Comando ricevuto: ");
-    Serial.print(comando);
-
-    if(comando = "Stop"){
-      vaiStop();
-    }
-
-    if(comando = "N"){
-      vaiAvanti();
-    }
-
-    if(comando = "S"){
-      vaiIndietro();
-    }
-
-    if(comando = "E"){
-      vaiADestra();
-    }
-
-    if(comando = "O"){
-      vaiASinistra();
-    }
-
-    if(comando = "NE"){
-      diagDesAvanti();
-    }
-
-    if(comando = "NO"){
-      diagSinAvanti();
-    }
-
-    if(comando = "SE"){
-      diagDesIndietro();
-    }
-
-    if(comando = "SO"){
-      diagSinIndietro();
-    }
-
-    if(comando = "RO"){
-      ruotaSensoOrario();
-    }
-
-    if(comando = "RA"){
-      ruotaSensoAntiorario();
-    }
-
-    if(comando = "Apri"){
-      apriBraccio();
-    }
-
-    if(comando = "Chiudi"){
-      chiudiBraccio();
-    }
-
-    if(comando = "Alza"){
-      alzaBraccio();
-    }
-
-    if(comando = "Abbassa"){
-      chiudiBraccio();
-    }
+  if(stopTime - startTime <= myDesiredTime){
     
+    if(Serial.available()){
+
+      if(controllo = false){
+        //prende input da seriale RPi
+        comando = Serial.read();
+        //*
+        //* debug
+        //*
+        Serial.print("Comando ricevuto: ");
+        Serial.print(comando);
+
+        if(comando = "InizioTimer"){
+          iniziaTimer();
+        }
+
+        if(comando = "Stop"){
+          vaiStop();
+        }
+
+        if(comando = "N"){
+          vaiAvanti();
+        }
+
+        if(comando = "S"){
+          vaiIndietro();
+        }
+
+        if(comando = "E"){
+          vaiADestra();
+        }
+
+        if(comando = "O"){
+          vaiASinistra();
+        }
+
+        if(comando = "NE"){
+          diagDesAvanti();
+        }
+
+        if(comando = "NO"){
+          diagSinAvanti();
+        }
+
+        if(comando = "SE"){
+          diagDesIndietro();
+        }
+        
+        if(comando = "SO"){
+          diagSinIndietro();
+        }
+
+        if(comando = "RO"){
+          ruotaSensoOrario();
+        }
+
+        if(comando = "RA"){
+          ruotaSensoAntiorario();
+        }
+
+        if(comando = "Apri"){
+          apriBraccio();
+        }
+
+        if(comando = "Chiudi"){
+          chiudiBraccio();
+        }
+
+        if(comando = "Alza"){
+          alzaBraccio();
+        }
+
+        if(comando = "Abbassa"){
+          chiudiBraccio();
+        } 
+      }
+    }
+  } else {
+    vaiStop();
+    controllo = true;
   }
-  
 }
+
+void iniziaTimer(){
+  stopTime = millis();
+}
+
 void vaiStop(){
   analogWrite(enA, speed255);
   digitalWrite(in1, LOW);
@@ -166,8 +192,8 @@ void vaiStop(){
   analogWrite(enD, speed255);
   digitalWrite(in7, LOW);
   digitalWrite(in8, LOW);
+}
   
-  }
 void vaiAvanti(){
   analogWrite(enA, speed255);
   digitalWrite(in1, HIGH);
