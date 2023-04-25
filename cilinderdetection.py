@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 
 cap = cv2.VideoCapture(0)
-net = cv2.dnn.readNetFromONNX("D:\yolov5\lestv6.onnx")
-file = open("D:\yolov5\classi.txt","r")
+net = cv2.dnn.readNetFromONNX("/home/pigeon/yolov5/lestv6.onnx")
+file = open("/home/pigeon/yolov5/classi.txt","r")
 classes = file.read().split('\n')
 focal = 105.3
 realwidth = 50
@@ -56,6 +56,7 @@ while True:
         label = classes[classes_ids[i]]
         conf = confidences[i]
         text = label + "{:.2f}".format(conf)
+        print("cilindro", i, "x: ", x1, "y: ", y1)
         cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(255,0,0),2)
         cv2.putText(img, text, (x1,y1-2),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
         cv2.putText(img, dist, (x1,y1-2+h),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
