@@ -15,8 +15,6 @@ unsigned long stopTime;
 unsigned long myDesiredTime;
 bool controllo = false;
 
-
-
 //motore A
 const int enA = 2; // PWM
 const int in1 = 22;      
@@ -95,88 +93,84 @@ void loop() {
 
   if(true){
     Serial.flush();
-    if(Serial.available()){
-    
-      if(controllo == false){
-        //prende input da seriale RPi
-        
-      
-        comando = Serial.readString();
-        comando.trim();
-        Serial.flush();
-        //Serial.available()
-        //* debug
-        //*stopTime - startTime <= myDesiredTime
-        Serial.print("Comando ricevuto: ");
-        Serial.print(comando);
-        
-        
 
-        if(comando == "InizioTimer"){
-          iniziaTimer();
-        }
-
-        if(comando == "Stop"){
-          vaiStop();
+    //controlla se il tempo è scaduto
+    if(stopTime - startTime <= myDesiredTime){
+      if(Serial.available()){
+        if(controllo == false){
+          //prende input da seriale RPi
+          comando = Serial.readString();
+          comando.trim();
+          Serial.flush();
           
-        }
+          //* debug
+          Serial.print("Comando ricevuto: ");
+          Serial.print(comando);
+          
+          if(comando == "InizioTimer"){
+            iniziaTimer();
+          }
 
-        if(comando == "N"){
-          Serial.println("vaiAvanti();");
-          vaiAvanti();
-        }
+          if(comando == "Stop"){
+            vaiStop();
+          }
 
-        if(comando == "S"){
-          vaiIndietro();
-        }
+          if(comando == "N"){
+            vaiAvanti();
+          }
 
-        if(comando == "E"){
-          vaiADestra();
-        }
+          if(comando == "S"){
+            vaiIndietro();
+          }
 
-        if(comando == "O"){
-          vaiASinistra();
-        }
+          if(comando == "E"){
+            vaiADestra();
+          }
 
-        if(comando == "NE"){
-          diagDesAvanti();
-        }
+          if(comando == "O"){
+            vaiASinistra();
+          }
 
-        if(comando == "NO"){
-          diagSinAvanti();
-        }
+          if(comando == "NE"){
+            diagDesAvanti();
+          }
 
-        if(comando == "SE"){
-          diagDesIndietro();
-        }
-        
-        if(comando == "SO"){
-          diagSinIndietro();
-        }
+          if(comando == "NO"){
+            diagSinAvanti();
+          }
 
-        if(comando == "RO"){
-          ruotaSensoOrario();
-        }
+          if(comando == "SE"){
+            diagDesIndietro();
+          }
+          
+          if(comando == "SO"){
+            diagSinIndietro();
+          }
 
-        if(comando == "RA"){
-          ruotaSensoAntiorario();
-        }
+          if(comando == "RO"){
+            ruotaSensoOrario();
+          }
 
-        if(comando == "Apri"){
-          apriBraccio();
-        }
+          if(comando == "RA"){
+            ruotaSensoAntiorario();
+          }
 
-        if(comando == "Chiudi"){
-          chiudiBraccio();
-        }
+          if(comando == "Apri"){
+            apriBraccio();
+          }
 
-        if(comando == "Alza"){
-          alzaBraccio();
-        }
+          if(comando == "Chiudi"){
+            chiudiBraccio();
+          }
 
-        if(comando == "Abbassa"){
-          abbassaBraccio();
-        } 
+          if(comando == "Alza"){
+            alzaBraccio();
+          }
+
+          if(comando == "Abbassa"){
+            abbassaBraccio();
+          } 
+        }
       }
     }
   } else {
@@ -310,8 +304,8 @@ void diagSinIndietro(){
 
 void ruotaSensoOrario(){
   analogWrite(enA, speed255);
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
   analogWrite(enB, speed255);    
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
@@ -319,8 +313,8 @@ void ruotaSensoOrario(){
   digitalWrite(in5, HIGH);
   digitalWrite(in6, LOW);
   analogWrite(enD, speed255);
-  digitalWrite(in7, HIGH);
-  digitalWrite(in8, LOW);
+  digitalWrite(in7, LOW);
+  digitalWrite(in8, HIGH);
   delay(1000);
 }
 
@@ -329,11 +323,11 @@ void ruotaSensoAntiorario(){
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   analogWrite(enB, speed255);    
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
   analogWrite(enC, speed255);    
-  digitalWrite(in5, LOW);
-  digitalWrite(in6, HIGH);
+  digitalWrite(in5, HIGH);
+  digitalWrite(in6, LOW);
   analogWrite(enD, speed255);
   digitalWrite(in7, LOW);
   digitalWrite(in8, HIGH);
