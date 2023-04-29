@@ -1,13 +1,28 @@
 import cv2
 import numpy as np
+import serial, time
+
+def serialSend(input):
+    #
+    #connessione Arduino-RPi tramite pota USB
+    #
+    with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+        time.sleep(0.1) # wait for serial to open
+        if arduino.isOpen():
+            try:
+                cmd = str(input)
+                arduino.write(cmd.encode())
+            except KeyboardInterrupt:
+                print("KeyboardInterrupt has been caught.") 
+
 def cilinderdetect():
     video=True
     cap = cv2.VideoCapture(0)
-    net = cv2.dnn.readNetFromONNX(r"/home/pigeon/yolov5/lestv6.onnx")
-    file = open(r"/home/pigeon/yolov5/classi.txt","r")
+    net = cv2.dnn.readNetFromONNX(r"C:\Users\pigeon\Downloads\yolov5-master\yolov5-master\lestv6.onnx")
+    file = open(r"C:\Users\pigeon\Desktop\CatanSbuBot-main\classi.txt","r")
     classes = file.read().split('\n')
-    focal = 105.3
-    realwidth = 50
+    focal = 664.08
+    realwidth = 4.975
     
     img = cap.read()[1]
     if img is None:
@@ -25,7 +40,7 @@ def cilinderdetect():
     confidences = []
     boxes = []
     rows = detections.shape[0]
-    centri=[10,10,10]
+    centri=[-1]
 
 
     img_width, img_height = img.shape[1], img.shape[0]
@@ -42,7 +57,7 @@ def cilinderdetect():
                 classes_ids.append(ind)
                 confidences.append(confidence)
                 cx, cy, w, h = row[:4]
-                x1 = int((cx- w/2)*x_scale)
+                x1 = int((cx-w/2)*x_scale)
                 y1 = int((cy-h/2)*y_scale)
                 cx1=int(cx)
                 centri.append(cx1)
@@ -61,23 +76,24 @@ def cilinderdetect():
         text = label + "{:.2f}".format(conf)
 
         #print(indices.shape,"  " ,indices, "  " , i, "x: ", x1, "y: ", y1)
-        cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(255,0,0),2)
+        cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(255,255,255),2)
         cv2.putText(img, text, (x1,y1-2),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
         cv2.putText(img, dist, (x1,y1-2+h),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
-    print("CENTRO ", centri[len(centri)-1])
-    if(centri[len(centri)-1]<310):
-            print("gira a sinistra")
-    else:
-        if(centri[len(centri)-1]>330):
+        # print("CENTRO ", centri[len(centri)-1], " ", w)
 
-            print("gira a destra")
-        else:
-            print("quanto è vicino? sei al centro")
-    if video:
-        cv2.imshow("VIDEO",img)
-        k = cv2.waitKey(10)
-        if k == ord('q'):
-            return
-for i in range (50):
+        if(centri[len(centri)-1]<310 and centri[len(centri)-1]>0):
+            serialSend("E")
+        elif(centri[len(centri)-1]>330):
+            serialSend("O")
+        elif(centri[len(centri)-1]<330 and centri[len(centri)-1]>310):
+            serialSend(dist)
+        if video:
+            cv2.imshow("VIDEO",img)
+            k = cv2.waitKey(10)
+            if k == ord('q'):
+                return
+start=input()
+if(start!=""): serialSend("InizioTimer")
+for i in range (30):
     cilinderdetect()
-
+    time.sleep(1.50)
