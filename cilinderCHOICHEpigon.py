@@ -15,8 +15,9 @@ def serialSend(comando):
     if arduino.isOpen():
         try:
             cmd = comando
-            print("comando inviato: ",comando)
+            
             arduino.write(cmd.encode())
+            print("comando inviato: ",comando)
         except KeyboardInterrupt:
             print("KeyboardInterrupt has been caught.")
     else:
@@ -91,14 +92,17 @@ def cilinderdetect():
         # print("CENTRO ", centri[len(centri)-1], " ", w)
         print("-------------------------------------------------------------------------------")
         print(index)
-        print("X1")
-        print(x1)
-        print("width")
-        print(w)
-        print("checking ")
-        print(x1+(w/2))
+        print("X1 ",x1)
+        
+        print("width", w)
+        
+        print("checking center at ", (x1+(w/2)))
+        
+        print("distance from center: ",abs(500-x1+(w/2)))
         if(abs(500-x1+(w/2))<closest):
             closest=abs(320-x1+(w/2))
+            cx1=x1
+            cw=w
         
         index = index+1
         if video:
@@ -107,18 +111,18 @@ def cilinderdetect():
             if k == ord('q'):
                 return
           
-    print("closest found: ")
-    print(closest)
+    print("closest found: ",closest)
     precision=20
-    if(x1+(w/2)<500-precision):
+    if(cx1+(cw/2)<500-precision):
             serialSend("O")
-    elif(x1+(w/2)>500+precision):
+    elif(cx1+(cw/2)>500+precision):
             serialSend("E")
-    elif(x1+(w/2)<500+precision and x1+(w/2)>500-precision):
+    elif(cx1+(cw/2)<500+precision and cx1+(cw/2)>500-precision):
             serialSend("Stop") 
 #start=input()
 #if(start!=""): serialSend("InizioTimer")
 with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+    print("{} connected!".format(arduino.port))
     time.sleep(0.1) # wait for serial to open
     firstMovement()
     for i in range (30):
@@ -126,3 +130,4 @@ with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
         print(i)
         cilinderdetect()
         #time.sleep(1.50)
+
