@@ -2,24 +2,22 @@ import cv2
 import numpy as np
 import serial, time
 
-def serialSend(input):
+def serialSend(comando):
     #
     #connessione Arduino-RPi tramite pota USB
     #
-    with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
-        time.sleep(0.1) # wait for serial to open
-        if arduino.isOpen():
-            try:
-                cmd = str(input)
-                arduino.write(cmd.encode())
-            except KeyboardInterrupt:
-                print("KeyboardInterrupt has been caught.") 
+    if arduino.isOpen():
+        try:
+            cmd = comando
+            arduino.write(cmd.encode())
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt has been caught.") 
 
 def cilinderdetect():
     video=True
     cap = cv2.VideoCapture(0)
-    net = cv2.dnn.readNetFromONNX(r"C:\Users\pigeon\Downloads\yolov5-master\yolov5-master\lestv6.onnx")
-    file = open(r"C:\Users\pigeon\Desktop\CatanSbuBot-main\classi.txt","r")
+    net = cv2.dnn.readNetFromONNX("/home/pigeon/yolov5/lestv6.onnx")
+    file = open("/home/pigeon/yolov5/classi.txt","r")
     classes = file.read().split('\n')
     focal = 664.08
     realwidth = 4.975
@@ -80,20 +78,22 @@ def cilinderdetect():
         cv2.putText(img, text, (x1,y1-2),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
         cv2.putText(img, dist, (x1,y1-2+h),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
         # print("CENTRO ", centri[len(centri)-1], " ", w)
-
+        
         if(centri[len(centri)-1]<310 and centri[len(centri)-1]>0):
-            serialSend("E")
-        elif(centri[len(centri)-1]>330):
             serialSend("O")
+        elif(centri[len(centri)-1]>330):
+            serialSend("E")
         elif(centri[len(centri)-1]<330 and centri[len(centri)-1]>310):
-            serialSend(dist)
+            serialSend("Stop")
         if video:
             cv2.imshow("VIDEO",img)
             k = cv2.waitKey(10)
             if k == ord('q'):
                 return
-start=input()
-if(start!=""): serialSend("InizioTimer")
-for i in range (30):
-    cilinderdetect()
-    time.sleep(1.50)
+#start=input()
+#if(start!=""): serialSend("InizioTimer")
+with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+    time.sleep(0.1) # wait for serial to open
+    for i in range (30):
+        cilinderdetect()
+        time.sleep(1.50)
