@@ -3,7 +3,7 @@ import numpy as np
 import serial, time
 def firstMovement():
     serialSend("N")
-    time.sleep(1.5)
+    time.sleep(5)
     serialSend("Stop")
     print("first movement done")
 
@@ -122,8 +122,13 @@ def cilinderdetect():
 #start=input()
 #if(start!=""): serialSend("InizioTimer")
 with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
-    print("{} connected!".format(arduino.port))
-    time.sleep(0.1) # wait for serial to open
+    time.sleep(3) # wait for serial to open
+    if arduino.isOpen():
+        print("{} connected!".format(arduino.port))
+    
+        cmd="porco de dio"
+        arduino.write(cmd.encode())
+    
     firstMovement()
     for i in range (30):
         print("photo number:")
