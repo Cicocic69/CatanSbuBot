@@ -96,6 +96,7 @@ void loop() {
 
     //controlla se il tempo è scaduto
     if(stopTime - startTime <= myDesiredTime){
+      stopTime = millis();
       if(Serial.available()){
         if(controllo == false){
           //prende input da seriale RPi
@@ -172,15 +173,15 @@ void loop() {
           } 
         }
       }
+    } else {
+      vaiStop();
+      controllo = true;
     }
-  } else {
-    vaiStop();
-    controllo = true;
   }
 }
 
 void iniziaTimer(){
-  stopTime = millis();
+  startTime = millis();
 }
 
 void vaiStop(){
