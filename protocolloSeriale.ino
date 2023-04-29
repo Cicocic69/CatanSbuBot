@@ -91,12 +91,11 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  if(true){
-    Serial.flush();
-
+    Serial.println(stopTime);
+    stopTime = millis();
     //controlla se il tempo è scaduto
     if(stopTime - startTime <= myDesiredTime){
-      stopTime = millis();
+      //Serial.println(controllo);
       if(Serial.available()){
         if(controllo == false){
           //prende input da seriale RPi
@@ -178,7 +177,6 @@ void loop() {
       controllo = true;
     }
   }
-}
 
 void iniziaTimer(){
   startTime = millis();
