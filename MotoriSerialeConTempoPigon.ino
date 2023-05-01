@@ -255,7 +255,7 @@ void vaiAvanti(){
   analogWrite(enD, speed255);
   digitalWrite(in7, HIGH);
   digitalWrite(in8, LOW);
-  delay(1000);
+  
 }
 
 void vaiIndietro(){
@@ -271,7 +271,7 @@ void vaiIndietro(){
   analogWrite(enD, speed255);
   digitalWrite(in7, LOW);
   digitalWrite(in8, HIGH);
-  delay(1000);
+  
 }
 
 void vaiADestra(){
@@ -287,7 +287,7 @@ void vaiADestra(){
   analogWrite(enD, speed255);
   digitalWrite(in7, HIGH);
   digitalWrite(in8, LOW);
-  delay(1000);
+  
 }
 
 void vaiASinistra(){
@@ -303,7 +303,7 @@ void vaiASinistra(){
   analogWrite(enD, speed255);
   digitalWrite(in7, LOW);
   digitalWrite(in8, HIGH);
-  delay(1000);
+  
 }
 
 void diagDesAvanti(){
@@ -313,7 +313,7 @@ void diagDesAvanti(){
   analogWrite(enD, speed255);
   digitalWrite(in7, HIGH);
   digitalWrite(in8, LOW);
-  delay(1000);
+  
 }
 
 void diagSinAvanti(){
@@ -323,7 +323,7 @@ void diagSinAvanti(){
   analogWrite(enC, speed255);
   digitalWrite(in5, HIGH);
   digitalWrite(in6, LOW);
-  delay(1000);
+  
 }
 
 void diagDesIndietro(){
@@ -333,7 +333,7 @@ void diagDesIndietro(){
   analogWrite(enD, speed255);
   digitalWrite(in7, LOW);
   digitalWrite(in8, HIGH);
-  delay(1000);
+  
 }
 
 void diagSinIndietro(){
@@ -343,7 +343,7 @@ void diagSinIndietro(){
   analogWrite(enC, speed255);
   digitalWrite(in5, LOW);
   digitalWrite(in6, HIGH);
-  delay(1000);
+  
 }
 
 void ruotaSensoOrario(){
@@ -359,7 +359,7 @@ void ruotaSensoOrario(){
   analogWrite(enD, speed255);
   digitalWrite(in7, HIGH);
   digitalWrite(in8, LOW);
-  delay(1000);
+  
 }
 
 void ruotaSensoAntiorario(){
@@ -375,25 +375,25 @@ void ruotaSensoAntiorario(){
   analogWrite(enD, speed255);
   digitalWrite(in7, LOW);
   digitalWrite(in8, HIGH);
-  delay(1000);
+  
 }
 
 void apriBraccio(){
   servoApriBraccio.write(180);     //APERTO
-  delay(1000);
+  
 }
 
 void chiudiBraccio(){
   servoApriBraccio.write(70);      //CHIUSO
-  delay(1000);
+  
 }
 
 void alzaBraccio(){
   servoMuoviBraccio.write(50);    //ALZATO
-  delay(1000);
+  
 }
 
 void abbassaBraccio(){
   servoMuoviBraccio.write(105);      //ABBASSATO
-  delay(1000);
+  
 }
