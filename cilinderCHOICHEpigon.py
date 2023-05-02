@@ -2,19 +2,18 @@ import cv2
 import numpy as np
 import serial, time
 def firstMovement():
-    serialSend("N")
+    serialSend("N",5000)
     time.sleep(5)
-    serialSend("Stop")
     print("first movement done")
 
      
-def serialSend(comando):
+def serialSend(comando ,durata):
     #
     #connessione Arduino-RPi tramite pota USB
     #
     if arduino.isOpen():
         try:
-            cmd = comando
+            cmd = comando + " " + str(durata)
             
             arduino.write(cmd.encode())
             print("comando inviato: ",comando)
@@ -50,6 +49,8 @@ def cilinderdetect():
     rows = detections.shape[0]
     centri=[-1]
 
+    cx1=0
+    cw=0
 
     img_width, img_height = img.shape[1], img.shape[0]
     x_scale = img_width/640
@@ -58,17 +59,16 @@ def cilinderdetect():
     for i in range(rows):
         row = detections[i]
         confidence = row[4]
-        if confidence > 0.5:
+        if confidence > 0.7:
             classes_score = row[5:]
             ind = np.argmax(classes_score)
-            if classes_score[ind] > 0.5:
+            if classes_score[ind] > 0.7:
                 classes_ids.append(ind)
                 confidences.append(confidence)
                 cx, cy, w, h = row[:4]
                 x1 = int((cx-w/2)*x_scale)
                 y1 = int((cy-h/2)*y_scale)
-                cx1=int(cx)
-                centri.append(cx1)
+                
                 width = int(w * x_scale)
                 height = int(h * y_scale)
                 box = np.array([x1,y1,width,height])
@@ -80,7 +80,7 @@ def cilinderdetect():
     index=1
     for i in indices:
         x1,y1,w,h = boxes[i]
-        dist = str((realwidth*focal)/w)
+        dist = (realwidth*focal)/w
         label = classes[classes_ids[i]]
         conf = confidences[i]
         text = label + "{:.2f}".format(conf)
@@ -88,7 +88,7 @@ def cilinderdetect():
         #print(indices.shape,"  " ,indices, "  " , i, "x: ", x1, "y: ", y1)
         cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(255,255,255),2)
         cv2.putText(img, text, (x1,y1-2),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
-        cv2.putText(img, dist, (x1,y1-2+h),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
+        cv2.putText(img, str(dist), (x1,y1-2+h),cv2.FONT_HERSHEY_COMPLEX, 0.7,(255,0,255),2)
         # print("CENTRO ", centri[len(centri)-1], " ", w)
         print("-------------------------------------------------------------------------------")
         print(index)
@@ -102,37 +102,46 @@ def cilinderdetect():
         if(abs(500-x1+(w/2))<closest):
             closest=abs(320-x1+(w/2))
             cx1=x1
+            cdist=dist
             cw=w
         
         index = index+1
-        if video:
-            cv2.imshow("VIDEO",img)
-            k = cv2.waitKey(10)
-            if k == ord('q'):
-                return
-          
-    print("closest found: ",closest)
-    precision=20
-    if(cx1+(cw/2)<500-precision):
-            serialSend("O")
-    elif(cx1+(cw/2)>500+precision):
-            serialSend("E")
-    elif(cx1+(cw/2)<500+precision and cx1+(cw/2)>500-precision):
-            serialSend("Stop") 
+
+    if(closest!=2000):
+        print("closest found: ",closest)
+        precision=55
+        if(cx1+(cw/2)<500-precision):
+                serialSend("E",closest/0.3)
+                time.sleep(closest/0.3/100)
+        elif(cx1+(cw/2)>500+precision):
+                serialSend("O",closest/0.3 )
+                time.sleep(closest/0.3/100)
+        elif(cx1+(cw/2)<500+precision and cx1+(cw/2)>500-precision):
+                serialSend("N",150)
+                time.sleep(0.5)
+                if(dist<16):
+                    serialSend("Chiudi",0)
+    else:
+        print("no cilindro found")
+    if video:
+        cv2.imshow("VIDEO",img)
+        k = cv2.waitKey(10)
+        if k == ord('q'):
+            cap.release()
+            return
 #start=input()
 #if(start!=""): serialSend("InizioTimer")
 with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
     time.sleep(3) # wait for serial to open
     if arduino.isOpen():
         print("{} connected!".format(arduino.port))
-    
-        cmd="porco de dio"
-        arduino.write(cmd.encode())
-    
+        
     firstMovement()
-    for i in range (30):
+    serialSend("Apri",0)
+    
+    for i in range (100):
         print("photo number:")
         print(i)
         cilinderdetect()
-        #time.sleep(1.50)
+        
 
