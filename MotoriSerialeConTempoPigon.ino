@@ -25,7 +25,7 @@ typedef struct
   }  dati;
 
 dati movimenti[100];
-
+dati succhia;
 
 
 //motore A
@@ -65,7 +65,7 @@ void setup() {
   startTime = 0;
   stopTime = 0;
   myDesiredTime = 205000;
-  
+
   //collegamento servo
   servoApriBraccio.attach(servoApriBraccioPin);
   servoMuoviBraccio.attach(servoMuoviBraccioPin);
@@ -176,6 +176,7 @@ void loop() {
           vaiADestra();
           delay(durata);
           vaiStop();
+          salva(comando, durata);
         }
 
         if(comando == "NE"){
@@ -189,30 +190,35 @@ void loop() {
           diagSinAvanti();
           delay(durata);
           vaiStop();
+          salva(comando, durata);
         }
 
         if(comando == "SE"){
           diagDesIndietro();
           delay(durata);
           vaiStop();
+          salva(comando, durata);
         }
         
         if(comando == "SO"){
           diagSinIndietro();
           delay(durata);
           vaiStop();
+          salva(comando, durata);
         }
 
         if(comando == "RO"){
           ruotaSensoOrario();
           delay(durata);
           vaiStop();
+          salva(comando, durata);
         }
 
         if(comando == "RA"){
           ruotaSensoAntiorario();
           delay(durata);
           vaiStop();
+          salva(comando, durata);
         }
 
         if(comando == "Apri"){
@@ -230,8 +236,90 @@ void loop() {
         if(comando == "Abbassa"){
           abbassaBraccio();
         } 
-        if(comando == "Traceback"{
-          traceback();
+        if(comando == "Traceback"){
+          /*
+          for(int i=0;i<mcounter;i++){
+            Serial.println(i);
+            Serial.println(movimenti[i].direzione);
+          }
+          */
+          Serial.println(mcounter);
+          while(mcounter>0){
+            delay(500);
+            succhia=traceback();
+            String comandoDown=succhia.direzione;
+            int durataDown=succhia.distanza;
+              
+            if(comandoDown == "N"){
+              vaiAvanti();
+              delay(durataDown);
+              vaiStop();
+              
+            }
+    
+            if(comandoDown == "S"){
+              vaiIndietro();
+              delay(durataDown);
+              vaiStop();
+              
+            }
+    
+            if(comandoDown == "E"){
+              vaiASinistra();
+              delay(durataDown);
+              vaiStop();
+              
+            }
+    
+            if(comandoDown == "O"){
+              vaiADestra();
+              delay(durataDown);
+              vaiStop();
+            }
+    
+            if(comandoDown == "NE"){
+              diagDesAvanti();
+              delay(durataDown);
+              vaiStop();
+              
+            }
+    
+            if(comandoDown == "NO"){
+              diagSinAvanti();
+              delay(durataDown);
+              vaiStop();
+            }
+    
+            if(comandoDown == "SE"){
+              diagDesIndietro();
+              delay(durataDown);
+              vaiStop();
+            }
+            
+            if(comandoDown == "SO"){
+              diagSinIndietro();
+              delay(durataDown);
+              vaiStop();
+            }
+    
+            if(comandoDown == "RO"){
+              ruotaSensoOrario();
+              delay(durataDown);
+              vaiStop();
+            }
+    
+            if(comandoDown == "RA"){
+              ruotaSensoAntiorario();
+              delay(durataDown);
+              vaiStop();
+            }
+
+            
+          }
+          
+          
+        }
+        if(comando == "Mflush"){
           mflush();
         }
       }
