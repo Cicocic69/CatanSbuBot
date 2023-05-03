@@ -153,13 +153,13 @@ void loop() {
         }
 
         if(comando == "E"){
-          vaiADestra();
+          vaiASinistra();
           delay(durata);
           vaiStop();
         }
 
         if(comando == "O"){
-          vaiASinistra();
+          vaiADestra();
           delay(durata);
           vaiStop();
         }
