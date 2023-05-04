@@ -56,6 +56,9 @@ String comando;
 int durata;
 int pointer;
 
+//variabile per controllo stato servo
+bool servoControllo = true;
+
 void setup() {
   // put your setup code here, to run once:
   
@@ -108,9 +111,13 @@ void loop() {
 
   if(true){
     Serial.flush();
+    if(servoControllo == true){
+        apriBraccio();
+      } else if(servoControllo == false){
+        chiudiBraccio();
+      }
     if(Serial.available()){
-    
-      if(controllo == false){
+        if(controllo == false){
         //prende input da seriale RPi
         
       
@@ -223,10 +230,12 @@ void loop() {
 
         if(comando == "Apri"){
           apriBraccio();
+          servoControllo == true;
         }
 
         if(comando == "Chiudi"){
           chiudiBraccio();
+          servoControllo == false;
         }
 
         if(comando == "Alza"){
