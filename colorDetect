@@ -1,0 +1,78 @@
+import cv2
+import numpy as np
+
+def colorDetect(x,y):
+    volte=10
+    webcam_video = cv2.VideoCapture(0)
+    toth=0
+    tots=0
+    totv=0
+    totr=0
+    totg=0
+    totb=0
+    for i in range(volte):
+        success, video = webcam_video.read() # Reading webcam footage
+        if success:
+            videohsv = cv2.cvtColor(video, cv2.COLOR_BGR2HSV) # Converting BGR image to HSV format
+                        
+            pixel=videohsv[x,y]
+            h = int(pixel[0])
+            s = int(pixel[1])
+            v = int(pixel[2])
+            
+            
+            toth=toth+h
+            tots=tots+s
+            totv=totv+v
+            
+            pixel=video[x,y]
+            b = int(pixel[0])
+            g = int(pixel[1])
+            r = int(pixel[2])
+            
+            
+            totr=totr+r
+            totg=totg+g
+            totb=totb+b
+            
+            
+            print((h,s,v),(r,g,b), i)
+            video=cv2.circle(video, (x, y), 5, (255,0,0), thickness=6)
+            video=cv2.rectangle(video, (0,0),(50,50), (b,g,r), -1)
+            cv2.imshow("video", video) # Displaying webcam image
+
+
+            
+
+    mediahsv=(int(toth/volte),int(tots/volte),int(totv/volte))
+    mediabgr=(int(totb/volte),int(totg/volte),int(totr/volte))
+
+    h,s,v=mediahsv
+    b,g,r=mediabgr
+
+    tolerance = 20
+    if (abs(r - g) <= tolerance and abs(g - b) <= tolerance and abs(b - r) <= tolerance):
+        color="grigio"
+    elif h >= 345 or h <= 15:
+        color = "rosso"
+    elif h >= 16 and h <= 75:
+        color = "giallo"
+    elif h >= 76 and h <= 165:
+        color = "verde"
+    elif h >= 166 and h <= 300:
+        color = "blu"
+    else:
+        color = ""
+        
+
+    cv2.waitKey(1)
+    webcam_video.release()
+    cv2.destroyAllWindows()
+    
+    return color, mediahsv, mediabgr
+
+
+width=640
+height=480
+
+print(colorDetect(int(width/2),height-100))
